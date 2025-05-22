@@ -1,0 +1,176 @@
+const initialTasks = [
+  {
+    id: 1,
+    title: "Launch Epic Career 🚀",
+    description: "Create a killer Resume",
+    status: "todo",
+  },
+  {
+    id: 2,
+    title: "Master JavaScript 💛",
+    description: "Get comfortable with the fundamentals",
+    status: "doing",
+  },
+  {
+    id: 3,
+    title: "Keep on Going 🏆",
+    description: "You're almost there",
+    status: "doing",
+  },
+
+  {
+    id: 4,
+    title: "Learn Data Structures and Algorithms 📚",
+    description:
+      "Study fundamental data structures and algorithms to solve coding problems efficiently",
+    status: "todo",
+  },
+  {
+    id: 5,
+    title: "Contribute to Open Source Projects 🌐",
+    description:
+      "Gain practical experience and collaborate with others in the software development community",
+    status: "done",
+  },
+  {
+    id: 6,
+    title: "Build Portfolio Projects 🛠️",
+    description:
+      "Create a portfolio showcasing your skills and projects to potential employers",
+    status: "done",
+  },
+];
+
+const taskMap = {}; // Track tasks by ID
+  
+  // Render tasks into the board
+  function renderTasks() {
+    const statuses = ['todo', 'doing', 'done'];
+  
+    statuses.forEach((status) => {
+      const container = document.querySelector(`.column-div[data-status="${status}"] .tasks-container`);
+      container.innerHTML = ''; // Clear existing
+      const filtered = initialTasks.filter((task) => task.status === status);
+      filtered.forEach((task) => {
+        taskMap[task.id] = task;
+        const div = document.createElement('div');
+        div.className = 'task-div';
+        div.textContent = task.title;
+        div.dataset.taskId = task.id;
+        div.addEventListener('click', () => openModal(task.id));
+        container.appendChild(div);
+      });
+  
+      // Update column header count
+      const header = document.querySelector(`#${status}Text`);
+      if (header) header.textContent = `${status.toUpperCase()} (${filtered.length})`;
+    });
+  }
+  
+  // Modal handling
+  function openModal(taskId = null) {
+    const modal = getOrCreateModal();
+    modal.classList.remove('hidden');
+  
+    const isEdit = !!taskId;
+    modal.dataset.taskId = isEdit ? taskId : '';
+  
+    modal.querySelector('.save-btn').textContent = isEdit ? 'Save Changes' : 'Add Task';
+    modal.querySelector('.delete-btn').style.display = isEdit ? 'inline-block' : 'none';
+  
+    modal.querySelector('#modal-title').value = isEdit ? taskMap[taskId].title : '';
+    modal.querySelector('#modal-description').value = isEdit ? taskMap[taskId].description : '';
+    modal.querySelector('#modal-status').value = isEdit ? taskMap[taskId].status : 'todo';
+  }
+  
+  
+  function closeModal() {
+    const modal = document.querySelector('.modal');
+    modal?.classList.add('hidden');
+  }
+  
+  function saveChanges() {
+    const modal = document.querySelector('.modal');
+    const taskId = parseInt(modal.dataset.taskId);
+    const task = taskMap[taskId];
+    if (!task) return;
+  
+    task.title = modal.querySelector('#modal-title').value.trim();
+    task.description = modal.querySelector('#modal-description').value.trim();
+    task.status = modal.querySelector('#modal-status').value;
+  
+    renderTasks();
+    closeModal();
+  }
+  
+  function deleteTask() {
+    const modal = document.querySelector('.modal');
+    const taskId = parseInt(modal.dataset.taskId);
+  
+    const index = initialTasks.findIndex((t) => t.id === taskId);
+    if (index !== -1) {
+      initialTasks.splice(index, 1);
+    }
+  
+    renderTasks();
+    closeModal();
+  }
+  
+  function getOrCreateModal() {
+    let modal = document.querySelector('.modal');
+    if (modal) return modal;
+  
+    modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Task</h2>
+          <span class="close-btn">&times;</span>
+        </div>
+  
+        <label for="modal-title"><strong>Title</strong></label>
+        <input type="text" id="modal-title" />
+  
+        <label for="modal-description"><strong>Description</strong></label>
+        <textarea id="modal-description" rows="4"></textarea>
+  
+        <label for="modal-status"><strong>Current Status</strong></label>
+        <select id="modal-status">
+          <option value="todo">To Do</option>
+          <option value="doing">Doing</option>
+          <option value="done">Done</option>
+        </select>
+  
+        <div class="modal-buttons">
+          <button class="save-btn">Save Changes</button>
+          <button class="delete-btn">Delete Task</button>
+        </div>
+      </div>
+    `;
+  
+    document.body.appendChild(modal);
+  
+    // Button functionality
+    modal.querySelector('.save-btn').addEventListener('click', saveChanges);
+    modal.querySelector('.delete-btn').addEventListener('click', deleteTask);
+    modal.querySelector('.close-btn').addEventListener('click', closeModal);
+  
+    return modal;
+  }
+  
+  
+  // Initialize board on load
+  window.addEventListener('DOMContentLoaded', () => {
+    renderTasks();
+  
+    // Add Task button event listener
+  document.getElementById('add-task-btn').addEventListener('click', () => {
+    openModal(); // Open modal in add mode
+  });
+});
+  
+
+  
+
+

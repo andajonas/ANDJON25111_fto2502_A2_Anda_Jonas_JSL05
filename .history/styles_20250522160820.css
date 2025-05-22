@@ -391,7 +391,7 @@
     color: #000;
   }
   
-  .modal.classList {
+  .modal.class {
     display: none;
   }
   
@@ -457,11 +457,7 @@
     font-weight: bold;
     cursor: pointer;
   }
-  
-  .hidden {
-    display: none !important;
-  }
-  
+
 
   
   

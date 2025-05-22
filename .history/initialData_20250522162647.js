@@ -187,60 +187,6 @@ const taskMap = {}; // Track tasks by ID
     closeModal();
   }
   
-  function getOrCreateModal() {
-    let modal = document.querySelector('.modal');
-  
-    // If modal doesn't exist, create it
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.className = 'modal hidden';
-      modal.innerHTML = `
-        <div class="modal-content">
-          <div class="modal-header">
-            <h2 id="modal-mode-title">Task</h2>
-            <span class="close-btn">&times;</span>
-          </div>
-  
-          <label for="modal-title"><strong>Title</strong></label>
-          <input type="text" id="modal-title" />
-  
-          <label for="modal-description"><strong>Description</strong></label>
-          <textarea id="modal-description" rows="4"></textarea>
-  
-          <label for="modal-status"><strong>Current Status</strong></label>
-          <select id="modal-status">
-            <option value="todo">To Do</option>
-            <option value="doing">Doing</option>
-            <option value="done">Done</option>
-          </select>
-  
-          <div class="modal-buttons">
-            <button class="save-btn">Save Changes</button>
-            <button class="delete-btn">Delete Task</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-    }
-  
-    // ✅ Always attach or reattach event listeners to ensure they work
-    const closeBtn = modal.querySelector('.close-btn');
-    const saveBtn = modal.querySelector('.save-btn');
-    const deleteBtn = modal.querySelector('.delete-btn');
-  
-    closeBtn.onclick = closeModal;
-    saveBtn.onclick = () => {
-      const taskId = modal.dataset.taskId;
-      if (taskId) {
-        saveChanges();
-      } else {
-        addNewTask();
-      }
-    };
-    deleteBtn.onclick = deleteTask;
-  
-    return modal;
-  }
   
   
   

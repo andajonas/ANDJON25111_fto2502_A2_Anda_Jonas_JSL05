@@ -41,20 +41,6 @@ const initialTasks = [
   },
 ];
 
-function saveToLocalStorage() {
-  localStorage.setItem('tasks', JSON.stringify(initialTasks));
-}
-
-function loadFromLocalStorage() {
-  const stored = localStorage.getItem('tasks');
-  if (stored) {
-    const parsed = JSON.parse(stored);
-    initialTasks.length = 0; // clear current
-    parsed.forEach(task => initialTasks.push(task));
-  }
-}
-
-
 const taskMap = {}; // Track tasks by ID
   
   // Render tasks into the board
@@ -82,59 +68,7 @@ const taskMap = {}; // Track tasks by ID
   }
   
   // Modal handling
-  function openModal(taskId) {
-    const modal = getOrCreateModal();
-    modal.classList.remove('hidden');
-  
-    const titleInput = modal.querySelector('#modal-title');
-    const descriptionInput = modal.querySelector('#modal-description');
-    const statusSelect = modal.querySelector('#modal-status');
-    const deleteBtn = modal.querySelector('.delete-btn');
-    const header = modal.querySelector('#modal-mode-title');
-  
-    if (taskId) {
-      const task = taskMap[taskId];
-      if (!task) return;
-  
-      titleInput.value = task.title;
-      descriptionInput.value = task.description;
-      statusSelect.value = task.status;
-      modal.dataset.taskId = taskId;
-      deleteBtn.style.display = 'inline-block';
-      header.textContent = 'Edit Task';
-    } else {
-      titleInput.value = '';
-      descriptionInput.value = '';
-      statusSelect.value = 'todo';
-      delete modal.dataset.taskId;
-      deleteBtn.style.display = 'none';
-      header.textContent = 'Add New Task';
-    }
-  }
-  
-  function addNewTask() {
-    const modal = document.querySelector('.modal');
-    const title = modal.querySelector('#modal-title').value.trim();
-    const description = modal.querySelector('#modal-description').value.trim();
-    const status = modal.querySelector('#modal-status').value;
-  
-    if (!title) return alert("Please enter a title.");
-  
-    const newTask = {
-      id: Date.now(),
-      title,
-      description,
-      status,
-    };
-  
-    initialTasks.push(newTask);
-    taskMap[newTask.id] = newTask;
-    saveToLocalStorage();
-    renderTasks();
-    closeModal();
-  }
-  
-
+ 
   
   function closeModal() {
     const modal = document.querySelector('.modal');
@@ -189,55 +123,49 @@ const taskMap = {}; // Track tasks by ID
   
   function getOrCreateModal() {
     let modal = document.querySelector('.modal');
+    if (modal) return modal;
   
-    // If modal doesn't exist, create it
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.className = 'modal hidden';
-      modal.innerHTML = `
-        <div class="modal-content">
-          <div class="modal-header">
-            <h2 id="modal-mode-title">Task</h2>
-            <span class="close-btn">&times;</span>
-          </div>
-  
-          <label for="modal-title"><strong>Title</strong></label>
-          <input type="text" id="modal-title" />
-  
-          <label for="modal-description"><strong>Description</strong></label>
-          <textarea id="modal-description" rows="4"></textarea>
-  
-          <label for="modal-status"><strong>Current Status</strong></label>
-          <select id="modal-status">
-            <option value="todo">To Do</option>
-            <option value="doing">Doing</option>
-            <option value="done">Done</option>
-          </select>
-  
-          <div class="modal-buttons">
-            <button class="save-btn">Save Changes</button>
-            <button class="delete-btn">Delete Task</button>
-          </div>
+    modal = document.createElement('div');
+    modal.className = 'modal hidden';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modal-mode-title">Task</h2>
+          <span class="close-btn">&times;</span>
         </div>
-      `;
-      document.body.appendChild(modal);
-    }
   
-    // ✅ Always attach or reattach event listeners to ensure they work
-    const closeBtn = modal.querySelector('.close-btn');
-    const saveBtn = modal.querySelector('.save-btn');
-    const deleteBtn = modal.querySelector('.delete-btn');
+        <label for="modal-title"><strong>Title</strong></label>
+        <input type="text" id="modal-title" />
   
-    closeBtn.onclick = closeModal;
-    saveBtn.onclick = () => {
+        <label for="modal-description"><strong>Description</strong></label>
+        <textarea id="modal-description" rows="4"></textarea>
+  
+        <label for="modal-status"><strong>Current Status</strong></label>
+        <select id="modal-status">
+          <option value="todo">To Do</option>
+          <option value="doing">Doing</option>
+          <option value="done">Done</option>
+        </select>
+  
+        <div class="modal-buttons">
+          <button class="save-btn">Save Changes</button>
+          <button class="delete-btn">Delete Task</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  
+    // Button events
+    modal.querySelector('.close-btn').addEventListener('click', closeModal);
+    modal.querySelector('.save-btn').addEventListener('click', () => {
       const taskId = modal.dataset.taskId;
       if (taskId) {
         saveChanges();
       } else {
         addNewTask();
       }
-    };
-    deleteBtn.onclick = deleteTask;
+    });
+    modal.querySelector('.delete-btn').addEventListener('click', deleteTask);
   
     return modal;
   }
@@ -246,15 +174,13 @@ const taskMap = {}; // Track tasks by ID
   
   // Initialize board on load
   window.addEventListener('DOMContentLoaded', () => {
-    loadFromLocalStorage();
     renderTasks();
   
-    const addBtn = document.getElementById('add-task-btn');
-    if (addBtn) {
-      addBtn.addEventListener('click', () => openModal());
-    }
+    // Add Task button event listener
+  document.getElementById('add-task-btn').addEventListener('click', () => {
+    openModal(); // Open modal in add mode
   });
-  
+});
   
 
   
