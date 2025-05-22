@@ -470,7 +470,7 @@
   }
   
   .emoji {
-    font-size: 20px;
+    font-size: 16px;
   }
   
   .switch {
@@ -520,17 +520,14 @@
   .hide-sidebar-btn {
     display: flex;
     align-items: center;
-    justify-content: center; /* centers content inside the button */
     gap: 0.5rem;
     background-color: transparent;
     border: none;
     font-size: 14px;
     font-weight: 600;
-    color: #635fc7;
+    color: #635fc7; 
     cursor: pointer;
-    margin: 0 auto; /* horizontally center button itself */
   }
-  
   
   
   

@@ -470,7 +470,7 @@
   }
   
   .emoji {
-    font-size: 20px;
+    font-size: 16px;
   }
   
   .switch {
@@ -520,18 +520,23 @@
   .hide-sidebar-btn {
     display: flex;
     align-items: center;
-    justify-content: center; /* centers content inside the button */
     gap: 0.5rem;
     background-color: transparent;
     border: none;
+    width:251px
     font-size: 14px;
     font-weight: 600;
-    color: #635fc7;
+    color: var(--secondary-font-color);
     cursor: pointer;
-    margin: 0 auto; /* horizontally center button itself */
+    transition: color 0.3s ease, background-color 0.3s ease;
   }
   
-  
+  .hide-sidebar-btn:hover {
+    background-color: #e4ebfa;
+    color: #635fc7;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+  }
   
   
   
