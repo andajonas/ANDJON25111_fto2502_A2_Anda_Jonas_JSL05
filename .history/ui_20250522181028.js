@@ -1,0 +1,142 @@
+/**
+ * @file ui.js
+ * @description UI rendering and modal management.
+ */
+
+import { initialTasks } from './initialData.js';
+import { taskMap, refreshTaskMap, addTask, editTask, deleteTask } from './tasks.js';
+import { saveToLocalStorage } from './storage.js';
+
+/**
+ * Render all tasks in their respective columns.
+ */
+export function renderTasks() {
+  refreshTaskMap();
+
+  const statuses = ['todo', 'doing', 'done'];
+
+  statuses.forEach((status) => {
+    const container = document.querySelector(`.column-div[data-status="${status}"] .tasks-container`);
+    container.innerHTML = ''; // Clear existing
+    const filtered = initialTasks.filter(task => task.status === status);
+    filtered.forEach(task => {
+      const div = document.createElement('div');
+      div.className = 'task-div';
+      div.textContent = task.title;
+      div.dataset.taskId = task.id;
+      div.addEventListener('click', () => openModal(task.id));
+      container.appendChild(div);
+    });
+
+    // Update column header count
+    const header = document.querySelector(`#${status}Text`);
+    if (header) header.textContent = `${status.toUpperCase()} (${filtered.length})`;
+  });
+}
+
+/**
+ * Get or create the modal element and attach event listeners.
+ * @returns {HTMLElement} The modal element.
+ */
+export 
+
+/**
+ * Open the modal for a specific task or for adding new task.
+ * @param {number | undefined} taskId
+ */
+export function openModal(taskId) {
+  const modal = getOrCreateModal();
+  modal.classList.remove('hidden');
+
+  const titleInput = modal.querySelector('#modal-title');
+  const descriptionInput = modal.querySelector('#modal-description');
+  const statusSelect = modal.querySelector('#modal-status');
+  const deleteBtn = modal.querySelector('.delete-btn');
+  const header = modal.querySelector('#modal-mode-title');
+
+  if (taskId) {
+    const task = taskMap[taskId];
+    if (!task) return;
+
+    titleInput.value = task.title;
+    descriptionInput.value = task.description;
+    statusSelect.value = task.status;
+    modal.dataset.taskId = taskId;
+    deleteBtn.style.display = 'inline-block';
+    header.textContent = 'Edit Task';
+  } else {
+    titleInput.value = '';
+    descriptionInput.value = '';
+    statusSelect.value = 'todo';
+    delete modal.dataset.taskId;
+    deleteBtn.style.display = 'none';
+    header.textContent = 'Add New Task';
+  }
+}
+
+/**
+ * Close the modal.
+ */
+export function closeModal() {
+  const modal = document.querySelector('.modal');
+  modal?.classList.add('hidden');
+}
+
+/**
+ * Save changes made in modal for existing task.
+ */
+function saveChanges() {
+  const modal = document.querySelector('.modal');
+  const taskId = Number(modal.dataset.taskId);
+  const title = modal.querySelector('#modal-title').value.trim();
+  const description = modal.querySelector('#modal-description').value.trim();
+  const status = modal.querySelector('#modal-status').value;
+
+  if (!title) {
+    alert("Title is required.");
+    return;
+  }
+
+  const updated = editTask(taskId, { title, description, status });
+  if (updated) {
+    saveToLocalStorage();
+    renderTasks();
+    closeModal();
+  }
+}
+
+/**
+ * Add a new task from modal input values.
+ */
+function addNewTask() {
+  const modal = document.querySelector('.modal');
+  const title = modal.querySelector('#modal-title').value.trim();
+  const description = modal.querySelector('#modal-description').value.trim();
+  const status = modal.querySelector('#modal-status').value;
+
+  if (!title) {
+    alert("Please enter a title.");
+    return;
+  }
+
+  addTask({ title, description, status });
+  saveToLocalStorage();
+  renderTasks();
+  closeModal();
+}
+
+/**
+ * Delete task from modal.
+ */
+function deleteTaskHandler() {
+  const modal = document.querySelector('.modal');
+  const taskId = Number(modal.dataset.taskId);
+  if (!taskId) return;
+
+  const deleted = deleteTask(taskId);
+  if (deleted) {
+    saveToLocalStorage();
+    renderTasks();
+    closeModal();
+  }
+}

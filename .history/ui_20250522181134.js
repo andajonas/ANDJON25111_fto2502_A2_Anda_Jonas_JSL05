@@ -105,39 +105,8 @@ export function getOrCreateModal() {
  * Open the modal for a specific task or for adding new task.
  * @param {number | undefined} taskId
  */
-export function openModal(taskId) {
-    const modal = getOrCreateModal();
-    modal.classList.remove('hidden');
-  
-    const titleInput = modal.querySelector('#modal-title');
-    const descriptionInput = modal.querySelector('#modal-description');
-    const statusSelect = modal.querySelector('#modal-status');
-    const deleteBtn = modal.querySelector('.delete-btn');
-    const header = modal.querySelector('#modal-mode-title');
-    const saveBtn = modal.querySelector('.save-btn');
-  
-    if (taskId) {
-      const task = taskMap[taskId];
-      if (!task) return;
-  
-      titleInput.value = task.title;
-      descriptionInput.value = task.description;
-      statusSelect.value = task.status;
-      modal.dataset.taskId = taskId;
-      deleteBtn.style.display = 'inline-block';
-      header.textContent = 'Edit Task';
-      saveBtn.textContent = 'Save Changes';
-    } else {
-      titleInput.value = '';
-      descriptionInput.value = '';
-      statusSelect.value = 'todo';
-      delete modal.dataset.taskId;
-      deleteBtn.style.display = 'none';
-      header.textContent = 'Add New Task';
-      saveBtn.textContent = 'Create Task';
-    }
-  }
-
+export 
+}
 
 /**
  * Close the modal.

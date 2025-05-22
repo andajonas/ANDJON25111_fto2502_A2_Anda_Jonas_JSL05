@@ -137,7 +137,8 @@ export function openModal(taskId) {
       saveBtn.textContent = 'Create Task';
     }
   }
-
+  
+}
 
 /**
  * Close the modal.
