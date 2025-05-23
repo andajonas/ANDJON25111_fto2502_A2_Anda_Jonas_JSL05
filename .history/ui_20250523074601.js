@@ -87,8 +87,7 @@ export function getOrCreateModal() {
         addNewTask();
       }
     };
-
-    deleteBtn.onclick = deleteTaskHandler;
+    
   
     // Set button text based on modal mode
     if (modal.dataset.taskId) {
